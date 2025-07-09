@@ -1,14 +1,10 @@
 import {Outlet} from 'react-router';
+import {Box} from '@chakra-ui/react';
 
-interface Props {
-  className?: string;
-}
-
-export const App = ({className}: Props) => {
+export const App = () => {
   return (
-    <div className={className}>
-      App
+    <Box className="min-h-screen flex justify-center items-center bg-gray-500">
       <Outlet />
-    </div>
+    </Box>
   );
 };
