@@ -11,7 +11,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 
-import { cn } from '@/shared';
+import {cn} from '@/shared';
 
 interface Props {
   className?: string;
@@ -52,7 +52,7 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
 
     navigate(navigatePath, {
       state: {
-        types: type,
+        type: type[0],
         number: checked ? 'random' : number,
         isRandom: checked,
       },
@@ -60,7 +60,10 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
   };
 
   return (
-    <Box className={cn('flex flex-col gap-4', className)} as={'form'} onSubmit={handleSubmit}>
+    <Box
+      className={cn('flex flex-col gap-4', className)}
+      as={'form'}
+      onSubmit={handleSubmit}>
       <Field.Root invalid={!!errorType}>
         <Select.Root
           collection={OPTIONS}
@@ -108,9 +111,8 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
         checked={checked}
         onCheckedChange={(e) => {
           setChecked(!!e.checked);
-        }}
-        >
-        <CheckboxCard.HiddenInput/>
+        }}>
+        <CheckboxCard.HiddenInput />
         <CheckboxCard.Control>
           <CheckboxCard.Label>Random</CheckboxCard.Label>
         </CheckboxCard.Control>

@@ -1,6 +1,16 @@
 import {useEffect, useState} from 'react';
-import {useLocation} from 'react-router';
-import {Container} from '@chakra-ui/react';
+import {useLocation, useNavigate} from 'react-router';
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  Skeleton,
+  Text,
+} from '@chakra-ui/react';
+
+import type {NumberDto, State} from '@/@types/types.dto';
+import {cn, ROUTES} from '@/shared';
 
 interface Props {
   className?: string;
@@ -8,39 +18,85 @@ interface Props {
 
 export const FactPage = ({className}: Props) => {
   const location = useLocation();
-  const {types, number, isRandom} = location.state || {};
-  const [facts, setFacts] = useState<Record<string, string>>({});
+  const state: State = location.state;
+  const [fact, setFact] = useState<NumberDto | null>(null);
+  const [isLoading, setisLoading] = useState(false);
+  const [error, setError] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!types || !number) return;
+    if (!state) return;
 
     const fetchFacts = async () => {
-      const results: Record<string, string> = {};
-
-      for (const type of types) {
-        const num = isRandom ? 'random' : number;
+      try {
+        setisLoading(true);
+        setError(false);
         const response = await fetch(
-          `http://numbersapi.com/${num}/${type}?json`
+          `http://numbersapi.com/${state.number}/${state.type}?json`
         );
-        const data = await response.json();
-        results[type] = data.text;
+        const data: NumberDto = await response.json();
+        setFact(data);
+      } catch {
+        setError(true);
+      } finally {
+        setisLoading(false);
       }
-
-      setFacts(results);
     };
 
     fetchFacts();
-  }, [types, number, isRandom]);
+  }, [state]);
+
+  if (!location.state) {
+    return (
+      <Box
+        className={cn(
+          'min-w-xs min-h-[500px] bg-neutral-900 py-3 rounded-sm flex flex-col gap-3 justify-center items-center',
+          className
+        )}>
+        <Text>Please fill out the form.</Text>
+        <Button onClick={() => navigate(ROUTES.app)}>Fill out the form.</Button>
+      </Box>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <Box
+        className={cn(
+          'min-w-xs min-h-[500px] bg-neutral-900 py-3 rounded-sm flex justify-center items-center',
+          className
+        )}>
+        <Skeleton width="200px" height="200px" />
+      </Box>
+    );
+  }
+
+  if (error) {
+    return (
+      <Box
+        className={cn(
+          'min-w-xs min-h-[500px] bg-neutral-900 py-3 rounded-sm flex flex-col gap-3 justify-center items-center',
+          className
+        )}>
+        <Text>Error. Something happened...</Text>
+        <Button onClick={() => navigate(ROUTES.app)}>Try again!</Button>
+      </Box>
+    );
+  }
 
   return (
-    <Container className={className}>
-      <h1>Факты о числе {number === 'random' ? 'случайном' : number}</h1>
-      {Object.entries(facts).map(([type, text]) => (
-        <div key={type}>
-          <h2>{type}:</h2>
-          <p>{text}</p>
-        </div>
-      ))}
-    </Container>
+    <Box
+      className={cn(
+        'min-w-xs min-h-[500px] bg-neutral-900 py-3 rounded-sm flex flex-col gap-3 justify-center items-center',
+        className
+      )}>
+      <Heading>Fact about {state.isRandom ? 'random' : 'your'} number.</Heading>
+      <Container maxW={'xs'}>
+        <Text>TYPE: {fact?.type}</Text>
+        <Text>NUMBER: {fact?.number}</Text>
+        <Text>FACT: {fact?.text}</Text>
+      </Container>
+      <Button onClick={() => navigate(ROUTES.app)}>Another one?</Button>
+    </Box>
   );
 };
