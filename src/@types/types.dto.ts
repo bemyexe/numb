@@ -1,4 +1,4 @@
-type NumberType = 'trivia' | ' year' | 'date' | 'math';
+export type NumberType = 'trivia' | ' year' | 'date' | 'math';
 
 export interface NumberDto {
   number: number;

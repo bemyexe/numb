@@ -11,6 +11,7 @@ import {
   Select,
 } from '@chakra-ui/react';
 
+import type {NumberType, State} from '@/@types/types.dto';
 import {cn} from '@/shared';
 
 interface Props {
@@ -28,7 +29,7 @@ const OPTIONS = createListCollection({
 });
 
 export const NumberFactForm = ({className, navigatePath}: Props) => {
-  const [type, setType] = useState<string[]>([]);
+  const [type, setType] = useState<NumberType[]>([]);
   const [number, setNumber] = useState('');
   const [checked, setChecked] = useState(false);
   const [errorType, setErrorType] = useState('');
@@ -50,12 +51,14 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
       return;
     }
 
+    const state: State = {
+      type: type[0],
+      number: checked ? 'random' : number,
+      isRandom: checked,
+    };
+
     navigate(navigatePath, {
-      state: {
-        type: type[0],
-        number: checked ? 'random' : number,
-        isRandom: checked,
-      },
+      state,
     });
   };
 
@@ -68,7 +71,7 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
         <Select.Root
           collection={OPTIONS}
           value={type}
-          onValueChange={(e) => setType(e.value)}>
+          onValueChange={(e) => setType(e.value as NumberType[])}>
           <Select.HiddenSelect />
           <Select.Control>
             <Select.Trigger>
