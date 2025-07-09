@@ -1,11 +1,9 @@
 import {createRoot} from 'react-dom/client';
 import {BrowserRouter, Route, Routes} from 'react-router';
 
-import {Provider} from '@/components/ui/provider';
-
 import {App} from './app';
 import {FactPage, InputPage} from './pages';
-import {ROUTES} from './shared';
+import {Provider, ROUTES} from './shared';
 
 import './style.css';
 
