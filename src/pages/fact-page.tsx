@@ -32,7 +32,7 @@ export const FactPage = ({className}: Props) => {
         setisLoading(true);
         setError(false);
         const response = await fetch(
-          `http://numbersapi.com/${state.number}/${state.type}?json`
+          `https://numbersapi.com/${state.number}/${state.type}?json`
         );
         const data: NumberDto = await response.json();
         setFact(data);
