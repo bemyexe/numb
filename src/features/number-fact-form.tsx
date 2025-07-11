@@ -11,8 +11,9 @@ import {
   Select,
 } from '@chakra-ui/react';
 
-import type {NumberType, State} from '@/@types/types.dto';
+import type {NumberType} from '@/@types/types.dto';
 import {cn} from '@/shared';
+import {useNumberInputStore} from '@/shared/store';
 
 interface Props {
   className?: string;
@@ -35,6 +36,7 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
   const [errorType, setErrorType] = useState('');
   const [errorNumber, setErrorNumber] = useState('');
   const navigate = useNavigate();
+  const {updateType, updateIsRandom, updateNumber} = useNumberInputStore();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -50,16 +52,10 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
       setErrorNumber('Enter a number or choose a random');
       return;
     }
-
-    const state: State = {
-      type: type[0],
-      number: checked ? 'random' : number,
-      isRandom: checked,
-    };
-
-    navigate(navigatePath, {
-      state,
-    });
+    updateType(type[0]);
+    updateNumber(checked ? 'random' : number);
+    updateIsRandom(checked);
+    navigate(navigatePath);
   };
 
   return (

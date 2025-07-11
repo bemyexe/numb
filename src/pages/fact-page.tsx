@@ -1,5 +1,5 @@
 import {useEffect, useState} from 'react';
-import {useLocation, useNavigate} from 'react-router';
+import {useNavigate} from 'react-router';
 import {
   Box,
   Button,
@@ -9,30 +9,31 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-import type {NumberDto, State} from '@/@types/types.dto';
+import type {NumberDto} from '@/@types/types.dto';
 import {cn, ROUTES} from '@/shared';
+import {useNumberInputStore} from '@/shared/store';
 
 interface Props {
   className?: string;
 }
 
 export const FactPage = ({className}: Props) => {
-  const location = useLocation();
-  const state: State = location.state;
+  const {type, number, isRandom} = useNumberInputStore();
+
   const [fact, setFact] = useState<NumberDto | null>(null);
   const [isLoading, setisLoading] = useState(false);
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!state) return;
+    if (!type || !number) return;
 
     const fetchFacts = async () => {
       try {
         setisLoading(true);
         setError(false);
         const response = await fetch(
-          `http://numbersapi.com/${state.number}/${state.type}?json`
+          `http://numbersapi.com/${number}/${type}?json`
         );
         const data: NumberDto = await response.json();
         setFact(data);
@@ -44,9 +45,9 @@ export const FactPage = ({className}: Props) => {
     };
 
     fetchFacts();
-  }, [state]);
+  }, [type, number]);
 
-  if (!location.state) {
+  if (!type || !number) {
     return (
       <Box
         className={cn(
@@ -90,7 +91,7 @@ export const FactPage = ({className}: Props) => {
         'min-w-xs min-h-[500px] bg-neutral-900 py-3 rounded-sm flex flex-col gap-3 justify-center items-center',
         className
       )}>
-      <Heading>Fact about {state.isRandom ? 'random' : 'your'} number.</Heading>
+      <Heading>Fact about {isRandom ? 'random' : 'your'} number.</Heading>
       <Container maxW={'xs'}>
         <Text>TYPE: {fact?.type}</Text>
         <Text>NUMBER: {fact?.number}</Text>
