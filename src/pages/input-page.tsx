@@ -2,12 +2,24 @@ import {Box, Container, Heading} from '@chakra-ui/react';
 
 import {NumberFactForm} from '@/features';
 import {cn, ROUTES} from '@/shared';
+import {useNumberInputStore} from '@/shared/store';
 
 interface Props {
   className?: string;
 }
 
 export const InputPage = ({className}: Props) => {
+  const {
+    type,
+    number,
+    isRandom,
+    updateType,
+    updateIsRandom,
+    updateNumber,
+    validate,
+    error,
+  } = useNumberInputStore();
+
   return (
     <Box
       className={cn(
@@ -16,7 +28,17 @@ export const InputPage = ({className}: Props) => {
       )}>
       <Heading>NUMB APP</Heading>
       <Container>
-        <NumberFactForm navigatePath={ROUTES.fact} />
+        <NumberFactForm
+          navigatePath={ROUTES.fact}
+          type={type}
+          number={number}
+          isRandom={isRandom}
+          updateType={updateType}
+          updateIsRandom={updateIsRandom}
+          updateNumber={updateNumber}
+          validate={validate}
+          error={error}
+        />
       </Container>
     </Box>
   );

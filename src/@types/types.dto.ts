@@ -1,16 +1,8 @@
-export type NumberType = 'trivia' | ' year' | 'date' | 'math';
-
 export interface NumberDto {
-  number: number;
+  number: string;
   text: string;
-  type: NumberType;
+  type: string;
   found: boolean;
   year?: number;
   date?: number;
-}
-
-export interface State {
-  type: NumberType;
-  number: string | number;
-  isRandom: boolean;
 }

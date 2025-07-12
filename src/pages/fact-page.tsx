@@ -18,7 +18,7 @@ interface Props {
 }
 
 export const FactPage = ({className}: Props) => {
-  const {type, number, isRandom} = useNumberInputStore();
+  const {type, number, isRandom, reset} = useNumberInputStore();
 
   const [fact, setFact] = useState<NumberDto | null>(null);
   const [isLoading, setisLoading] = useState(false);
@@ -26,14 +26,14 @@ export const FactPage = ({className}: Props) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!type || !number) return;
+    if (!type && !number) return;
 
     const fetchFacts = async () => {
       try {
         setisLoading(true);
         setError(false);
         const response = await fetch(
-          `http://numbersapi.com/${number}/${type}?json`
+          `http://numbersapi.com/${isRandom ? 'random' : number}/${type}?json`
         );
         const data: NumberDto = await response.json();
         setFact(data);
@@ -45,9 +45,9 @@ export const FactPage = ({className}: Props) => {
     };
 
     fetchFacts();
-  }, [type, number]);
+  }, [type, number, isRandom]);
 
-  if (!type || !number) {
+  if (!type && !number) {
     return (
       <Box
         className={cn(
@@ -97,7 +97,13 @@ export const FactPage = ({className}: Props) => {
         <Text>NUMBER: {fact?.number}</Text>
         <Text>FACT: {fact?.text}</Text>
       </Container>
-      <Button onClick={() => navigate(ROUTES.app)}>Another one?</Button>
+      <Button
+        onClick={() => {
+          navigate(ROUTES.app);
+          reset();
+        }}>
+        Another one?
+      </Button>
     </Box>
   );
 };

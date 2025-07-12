@@ -1,4 +1,4 @@
-import {type FormEvent, useState} from 'react';
+import {type FormEvent} from 'react';
 import {useNavigate} from 'react-router';
 import {
   Box,
@@ -11,13 +11,23 @@ import {
   Select,
 } from '@chakra-ui/react';
 
-import type {NumberType} from '@/@types/types.dto';
 import {cn} from '@/shared';
-import {useNumberInputStore} from '@/shared/store';
+import {type NumberInputState} from '@/shared/store';
 
 interface Props {
   className?: string;
   navigatePath: string;
+  type: string;
+  number: string;
+  isRandom: boolean;
+  error?: {
+    type?: string;
+    number?: string;
+  };
+  updateType: (type: NumberInputState['type']) => void;
+  updateNumber: (type: NumberInputState['number']) => void;
+  updateIsRandom: (type: NumberInputState['isRandom']) => void;
+  validate: () => boolean;
 }
 
 const OPTIONS = createListCollection({
@@ -29,32 +39,25 @@ const OPTIONS = createListCollection({
   ],
 });
 
-export const NumberFactForm = ({className, navigatePath}: Props) => {
-  const [type, setType] = useState<NumberType[]>([]);
-  const [number, setNumber] = useState('');
-  const [checked, setChecked] = useState(false);
-  const [errorType, setErrorType] = useState('');
-  const [errorNumber, setErrorNumber] = useState('');
+export const NumberFactForm = ({
+  className,
+  navigatePath,
+  type,
+  number,
+  isRandom,
+  updateType,
+  updateIsRandom,
+  updateNumber,
+  validate,
+  error,
+}: Props) => {
   const navigate = useNavigate();
-  const {updateType, updateIsRandom, updateNumber} = useNumberInputStore();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setErrorType('');
-    setErrorNumber('');
 
-    if (!type.length) {
-      setErrorType('Select at least one type');
-      return;
-    }
+    if (!validate()) return;
 
-    if (!checked && !number) {
-      setErrorNumber('Enter a number or choose a random');
-      return;
-    }
-    updateType(type[0]);
-    updateNumber(checked ? 'random' : number);
-    updateIsRandom(checked);
     navigate(navigatePath);
   };
 
@@ -63,11 +66,11 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
       className={cn('flex flex-col gap-4', className)}
       as={'form'}
       onSubmit={handleSubmit}>
-      <Field.Root invalid={!!errorType}>
+      <Field.Root invalid={!!error?.type}>
         <Select.Root
           collection={OPTIONS}
-          value={type}
-          onValueChange={(e) => setType(e.value as NumberType[])}>
+          value={type ? [type] : []}
+          onValueChange={(e) => updateType(e.value[0])}>
           <Select.HiddenSelect />
           <Select.Control>
             <Select.Trigger>
@@ -91,25 +94,25 @@ export const NumberFactForm = ({className, navigatePath}: Props) => {
             </Select.Positioner>
           </Portal>
         </Select.Root>
-        <Field.ErrorText>{errorType}</Field.ErrorText>
+        <Field.ErrorText>{error?.type}</Field.ErrorText>
       </Field.Root>
 
-      <Field.Root invalid={!!errorNumber}>
+      <Field.Root invalid={!!error?.number}>
         <NumberInput.Root
           w="full"
-          disabled={checked}
+          disabled={isRandom}
           value={number}
-          onValueChange={(e) => setNumber(e.value)}>
+          onValueChange={(e) => updateNumber(e.value)}>
           <NumberInput.Control />
           <NumberInput.Input placeholder="Select number" />
         </NumberInput.Root>
-        <Field.ErrorText>{errorNumber}</Field.ErrorText>
+        <Field.ErrorText>{error?.number}</Field.ErrorText>
       </Field.Root>
 
       <CheckboxCard.Root
-        checked={checked}
+        checked={isRandom}
         onCheckedChange={(e) => {
-          setChecked(!!e.checked);
+          updateIsRandom(!!e.checked);
         }}>
         <CheckboxCard.HiddenInput />
         <CheckboxCard.Control>
