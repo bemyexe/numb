@@ -2,7 +2,11 @@
 
 ### Project
 
-https://github.com/user-attachments/assets/6816ea5b-6ed0-4669-ac5e-97d8013bc330
+
+
+https://github.com/user-attachments/assets/6b338593-1eaa-4374-a8a4-47752eb7082c
+
+
 
 ### Stack
 - React + Typescript
