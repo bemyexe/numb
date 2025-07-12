@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useLayoutEffect, useState} from 'react';
 import {useNavigate} from 'react-router';
 import {
   Box,
@@ -25,7 +25,7 @@ export const FactPage = ({className}: Props) => {
   const [error, setError] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!type && !number) return;
 
     const fetchFacts = async () => {
